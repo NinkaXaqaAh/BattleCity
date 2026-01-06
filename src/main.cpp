@@ -4,6 +4,7 @@
 #include <iostream>
 #include  "Renderer/ShaderProgram.h"
 #include "Resources/ResourceManager.h"
+#include "Renderer/Textures2D.h"
 
 GLfloat point[] = {
      0.0f,  0.5f, 0.0f,
@@ -14,6 +15,11 @@ GLfloat colors[] = {
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f
+};
+GLfloat texCoord[] = {
+    0.5f, 1.0f,
+    1.0f, 0.0f,
+    0.0f, 0.0f
 };
 
 
@@ -77,7 +83,9 @@ int main(int argc, char** argv) {
             return -1;
         }
 
-        // данные указанные на 6-33 строках сохраняются в памяти видеокарты
+        auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
+
+        // данные о шейлерах сохраняются в памяти видеокарты
         GLuint points_vbo = 0; // буфер позиций
         glGenBuffers(1, &points_vbo);
         glBindBuffer(GL_ARRAY_BUFFER, points_vbo); // делаем текущим Buffer
@@ -85,8 +93,13 @@ int main(int argc, char** argv) {
 
         GLuint colors_vbo = 0; // буфер цвета
         glGenBuffers(1, &colors_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo); // делаем текущим Buffer на 102 строке
+        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo); // делаем текущим Buffer
         glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+        GLuint texCoord_vbo = 0;
+        glGenBuffers(1, &texCoord_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo); // делаем текущим Buffer
+        glBufferData(GL_ARRAY_BUFFER, sizeof(texCoord), texCoord, GL_STATIC_DRAW);
 
         // указыввем что делать с данными выше, где делались и сохранялись в видеокарту буферы
         GLuint vao = 0; // Vertex attribute option
@@ -102,6 +115,14 @@ int main(int argc, char** argv) {
         glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        pDefaultShaderProgram->use();
+        pDefaultShaderProgram->setInt("tex", 0);
+
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(pWindow)) {
             /* Render here */
@@ -110,6 +131,7 @@ int main(int argc, char** argv) {
             // отрисовка
             pDefaultShaderProgram->use();
             glBindVertexArray(vao);
+            tex->bind();
             glDrawArrays(GL_TRIANGLES, 0, 3);// сама команда отрисовки(отрисовывает текущий!)
 
 
@@ -120,6 +142,7 @@ int main(int argc, char** argv) {
             glfwPollEvents();
         }
     }
+    
     glfwTerminate();
     return 0;
 }
