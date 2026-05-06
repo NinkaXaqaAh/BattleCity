@@ -7,13 +7,36 @@ project(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME} 
 	src/main.cpp
+
 	src/Renderer/ShaderProgram.cpp
 	src/Renderer/ShaderProgram.h
 	src/Renderer/Textures2D.cpp
 	src/Renderer/Textures2D.h
+	src/Renderer/Sprite.h
+	src/Renderer/Sprite.cpp
+	src/Renderer/AnimatedSprite.h
+	src/Renderer/AnimatedSprite.cpp
+	src/Renderer/VertexBuffer.cpp
+	src/Renderer//VertexBuffer.h
+	src/Renderer/IndexBuffer.cpp
+	src/Renderer//IndexBuffer.h
+	src/Renderer/VertexArray.cpp
+	src/Renderer//VertexArray.h
+	src/Renderer/VertexBufferLayout.cpp
+	src/Renderer//VertexBufferLayout.h
+	src/Renderer/Renderer.cpp
+	src/Renderer//Renderer.h
+
 	src/Resources/ResourceManager.cpp
 	src/Resources/ResourceManager.h
 	src/Resources/stb_image.h
+	
+	src/Game/Game.h
+	src/Game/Game.cpp
+	src/Game/Tank.cpp
+	src/Game/Tank.h
+
+	
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
@@ -28,6 +51,8 @@ target_link_libraries(${PROJECT_NAME} glfw)
 
 add_subdirectory(external/glad)
 target_link_libraries(${PROJECT_NAME} glad)
+
+include_directories(external/glm)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 
